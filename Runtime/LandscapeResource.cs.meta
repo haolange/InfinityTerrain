@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3793f101d6ae41c45af4dcc6fe04722e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - CreateIcon: {fileID: 2800000, guid: e7e031d6350c8ec49a33e1a20842fc60, type: 3}
+  - ImportIcon: {fileID: 2800000, guid: 3dfec50d1bccc8a47a280cc6db7260a6, type: 3}
+  - ExportIcon: {fileID: 2800000, guid: 6923fa77b55f6754385cb00cf43f0700, type: 3}
+  - SculptIcon: {fileID: 2800000, guid: bb7e9ad7309a64f46be78b2b30dec3aa, type: 3}
+  - EraseIcon: {fileID: 2800000, guid: 344b281f0cb7e3344847e43847dfd85f, type: 3}
+  - SmoothIcon: {fileID: 2800000, guid: e6577a23424d3ee4c8572c1c71ea2041, type: 3}
+  - FlattenIcon: {fileID: 2800000, guid: 457f255db4af39448ba3ac65d31ef229, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
