@@ -1,5 +1,6 @@
 {
     "name": "Infinity.Render.InfinityTerrain.Runtime",
+    "rootNamespace": "",
     "references": [
         "Unity.Jobs",
         "Unity.Burst",
@@ -17,7 +18,7 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "com.infinity.render-terrain",
+            "name": "com.unity.render-terrain.infinity",
             "expression": "0.0.0",
             "define": "InfinityTerrainRuntime"
         }

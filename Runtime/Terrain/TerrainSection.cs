@@ -43,14 +43,14 @@ namespace Landscape.Terrain
             float[] LODScreenRatioSquared = new float[InMaxLOD];
 
             float CurrentScreenSizeRatio = InLOD0ScreenSize;
-            float ScreenSizeRatioDivider = Mathf.Max(InLOD0Distribution, 1.01f);
+            float ScreenSizeRatioDivider = math.max(InLOD0Distribution, 1.01f);
             LODScreenRatioSquared[0] = LandscapeUtility.Squared(CurrentScreenSizeRatio);
 
             // LOD 0 handling
             LODSettings.LOD0ScreenSizeSquared = LandscapeUtility.Squared(CurrentScreenSizeRatio);
             CurrentScreenSizeRatio /= ScreenSizeRatioDivider;
             LODSettings.LOD1ScreenSizeSquared = LandscapeUtility.Squared(CurrentScreenSizeRatio);
-            ScreenSizeRatioDivider = Mathf.Max(InLODDistribution, 1.01f);
+            ScreenSizeRatioDivider = math.max(InLODDistribution, 1.01f);
             LODSettings.LODOnePlusDistributionScalarSquared = ScreenSizeRatioDivider * ScreenSizeRatioDivider;
 
             // Other LODs
@@ -82,7 +82,7 @@ namespace Landscape.Terrain
             float ScreenSize = LandscapeUtility.ComputeBoundsScreenRadiusSquared(LandscapeUtility.GetBoundRadius(BoundinBox), BoundinBox.center, ViewOringin, TerrainBatchInitializer.MatrixProj);
             LODIndex = math.min(6, LandscapeUtility.GetLODFromScreenSize(LODSettings, ScreenSize, 1, out FractionLOD));
             FractionLOD = math.min(5, FractionLOD);
-            NumQuad = Mathf.Clamp(SectionSize >> LODIndex, 1, SectionSize);
+            NumQuad = math.clamp(SectionSize >> LODIndex, 1, SectionSize);
 
             TerrainLayer[] TerrainLayer = TerrainBatchInitializer.TerrainLayer;
 

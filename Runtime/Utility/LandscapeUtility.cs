@@ -6,60 +6,60 @@ namespace Landscape.Utils
 {
     public static class LandscapeUtility 
     {
-        public static float4[] LODColor = new float4[7] { new float4(1, 1, 1, 1), new float4(1, 0, 0, 1), new float4(0, 1, 0, 1), new float4(0, 0, 1, 1), new float4(1, 1, 0, 1), new float4(1, 0, 1, 1), new float4(0, 1, 1, 1) };
-        
-        public static float Squared(float A)
+        public static Color[] LODColor = new Color[7] { new Color(1, 1, 1, 1), new Color(1, 0, 0, 1), new Color(0, 1, 0, 1), new Color(0, 0, 1, 1), new Color(1, 1, 0, 1), new Color(1, 0, 1, 1), new Color(0, 1, 1, 1) };
+
+        public static float Squared(in float A)
         {
             return A * A;
         }
 
-        public static float DistSquared(Vector3 V1, Vector3 V2)
+        public static float DistSquared(in float3 V1, in float3 V2)
         {
             return Squared(V2.x - V1.x) + Squared(V2.y - V1.y) + Squared(V2.z - V1.z);
         }
 
-        public static float LogX(float Base, float Value)
+        public static float LogX(in float Base, in float Value)
         {
-            return Mathf.Log(Value) / Mathf.Log(Base);
+            return math.log(Value) / math.log(Base);
         }
 
-        public static float GetBoundRadius(Bounds BoundBox)
+        public static float GetBoundRadius(in Bounds BoundBox)
         {
-            Vector3 Extents = BoundBox.extents;
-	        return Mathf.Max( Mathf.Max(Mathf.Abs(Extents.x), Mathf.Abs(Extents.y)), Mathf.Abs(Extents.z) );
+            float3 Extents = BoundBox.extents;
+	        return math.max(math.max(math.abs(Extents.x), math.abs(Extents.y)), math.abs(Extents.z) );
         }
 
-        public static float4x4 GetProjectionMatrix(float HalfFOV, float Width, float Height, float MinZ, float MaxZ)
+        public static float4x4 GetProjectionMatrix(in float HalfFOV, in float Width, in float Height, in float MinZ, in float MaxZ)
         {
-            float4 column0 = new float4(1.0f / Mathf.Tan(HalfFOV),	0.0f,									0.0f,							                        0.0f);
-            float4 column1 = new float4(0.0f,						Width / Mathf.Tan(HalfFOV) / Height,	    0.0f,							                        0.0f);
+            float4 column0 = new float4(1.0f / math.tan(HalfFOV),	    0.0f,									0.0f,							                        0.0f);
+            float4 column1 = new float4(0.0f,						    Width / math.tan(HalfFOV) / Height,	    0.0f,							                        0.0f);
             float4 column2 = new float4(0.0f,						    0.0f,									MinZ == MaxZ ? 1.0f : MaxZ / (MaxZ - MinZ),			    1.0f);
             float4 column3 = new float4(0.0f,						    0.0f,								   -MinZ * (MinZ == MaxZ ? 1.0f : MaxZ / (MaxZ - MinZ)),	0.0f);
 
             return new float4x4(column0, column1, column2, column3);
         }
 
-        public static float ComputeBoundsScreenRadiusSquared(float SphereRadius, Vector3 BoundsOrigin, Vector3 ViewOrigin, Matrix4x4 ProjMatrix)
+        public static float ComputeBoundsScreenRadiusSquared(in float SphereRadius, in float3 BoundsOrigin, in float3 ViewOrigin, in Matrix4x4 ProjMatrix)
         {
             float DistSqr = DistSquared(BoundsOrigin, ViewOrigin) * ProjMatrix.m23;
 
-            float ScreenMultiple = Mathf.Max(0.5f * ProjMatrix.m00, 0.5f * ProjMatrix.m11);
+            float ScreenMultiple = math.max(0.5f * ProjMatrix.m00, 0.5f * ProjMatrix.m11);
             ScreenMultiple *= SphereRadius;
 
-            return (ScreenMultiple * ScreenMultiple) / Mathf.Max(1, DistSqr);
+            return (ScreenMultiple * ScreenMultiple) / math.max(1, DistSqr);
         }
 
-        public static float ComputeBoundsScreenRadiusSquared(float SphereRadius, Vector3 BoundsOrigin, Vector3 ViewOrigin, float4x4 ProjMatrix)
+        public static float ComputeBoundsScreenRadiusSquared(in float SphereRadius, in float3 BoundsOrigin, in float3 ViewOrigin, in float4x4 ProjMatrix)
         {
             float DistSqr = DistSquared(BoundsOrigin, ViewOrigin) * ProjMatrix.c2.z;
 
-            float ScreenMultiple = Mathf.Max(0.5f * ProjMatrix.c0.x, 0.5f * ProjMatrix.c1.y);
+            float ScreenMultiple = math.max(0.5f * ProjMatrix.c0.x, 0.5f * ProjMatrix.c1.y);
             ScreenMultiple *= SphereRadius;
 
-            return (ScreenMultiple * ScreenMultiple) / Mathf.Max(1, DistSqr);
+            return (ScreenMultiple * ScreenMultiple) / math.max(1, DistSqr);
         }
 
-        public static bool IntersectAABBFrustum(Plane[] plane, Bounds bound)
+        public static bool IntersectAABBFrustum(Plane[] plane, in Bounds bound)
         {
             for (int i = 0; i < 6; i++)
             {
@@ -77,7 +77,7 @@ namespace Landscape.Utils
             return true;
         }
 
-        public static int GetLODFromScreenSize(SectionLODData LODSettings, float InScreenSizeSquared, float InViewLODScale, out float OutFractionalLOD)
+        public static int GetLODFromScreenSize(in SectionLODData LODSettings, in float InScreenSizeSquared, in float InViewLODScale, out float OutFractionalLOD)
         {
             float ScreenSizeSquared = InScreenSizeSquared / InViewLODScale;
             
@@ -85,7 +85,7 @@ namespace Landscape.Utils
                 OutFractionalLOD = LODSettings.LastLODIndex;
                 return LODSettings.LastLODIndex;
             } else if (ScreenSizeSquared > LODSettings.LOD1ScreenSizeSquared) {
-                OutFractionalLOD = (LODSettings.LOD0ScreenSizeSquared - Mathf.Min(ScreenSizeSquared, LODSettings.LOD0ScreenSizeSquared)) / (LODSettings.LOD0ScreenSizeSquared - LODSettings.LOD1ScreenSizeSquared);
+                OutFractionalLOD = (LODSettings.LOD0ScreenSizeSquared - math.min(ScreenSizeSquared, LODSettings.LOD0ScreenSizeSquared)) / (LODSettings.LOD0ScreenSizeSquared - LODSettings.LOD1ScreenSizeSquared);
                 return 0;
             } else {
                 OutFractionalLOD = 1 + LogX(LODSettings.LODOnePlusDistributionScalarSquared, LODSettings.LOD1ScreenSizeSquared / ScreenSizeSquared);
@@ -93,7 +93,7 @@ namespace Landscape.Utils
             }
         }
 
-        public static void GetNeighborSection(int SectorSize, TerrainSection[] TerrainSections)
+        public static void GetNeighborSection(in int SectorSize, TerrainSection[] TerrainSections)
         {
             int[,] Direction = new int[,] { { 0, 1 }, { 0, -1 }, { -1, 0 }, { 1, 0 } };
 

@@ -61,8 +61,8 @@ float4 ShadingPixel(const Varyings In) : SV_Target
 
     //Lighting
     float4 DirectDiffuse = saturate(dot(normalize(_MainLightPosition.xyz), TerrainNormal)) * float4(_MainLightColor.rgb, 1) * ShadowTream;
-    //float4 IndirectDiffuse = _Cubemap.SampleLevel(Global_bilinear_clamp_sampler, TerrainNormal, 10);
-    float4 Lighting = float4(SurfaceTexture.Albedo, 1) * (DirectDiffuse + 0);
+    float4 IndirectDiffuse = _Cubemap.SampleLevel(Global_bilinear_clamp_sampler, TerrainNormal, 10);
+    float4 Lighting = float4(SurfaceTexture.Albedo, 1) * (DirectDiffuse + IndirectDiffuse);
     
     return Lighting;
     //return float4(In.UV0, 0, 1);

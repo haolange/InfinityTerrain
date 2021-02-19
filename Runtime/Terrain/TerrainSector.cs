@@ -57,7 +57,7 @@ namespace Landscape.Terrain
             LandscapeUtility.GetNeighborSection(InSectorSize, TerrainSections);
         }
 
-        public void CorrectionBounds(int SectionSize, int TerrainSize, float ScaleY, float3 TerrianPosition, Texture2D Heightmap)
+        public void CorrectionBounds(int NumQuad, int TerrainSize, float ScaleY, float3 TerrianPosition, Texture2D Heightmap)
         {
             int TerrainSize_Half = TerrainSize / 2;
 
@@ -66,8 +66,8 @@ namespace Landscape.Terrain
                 float2 PositionScale = new float2(TerrianPosition.x, TerrianPosition.z) + new float2(TerrainSize_Half, TerrainSize_Half);
                 float2 RectUV = new float2((Section.PivotPosition.x - PositionScale.x) + TerrainSize_Half, (Section.PivotPosition.z - PositionScale.y) + TerrainSize_Half);
 
-                int ReverseScale = TerrainSize - SectionSize;
-                Color[] HeightValues = Heightmap.GetPixels(Mathf.FloorToInt(RectUV.x), ReverseScale - Mathf.FloorToInt(RectUV.y), Mathf.FloorToInt(SectionSize), Mathf.FloorToInt(SectionSize), 0);
+                int ReverseScale = TerrainSize - NumQuad;
+                Color[] HeightValues = Heightmap.GetPixels(Mathf.FloorToInt(RectUV.x), ReverseScale - Mathf.FloorToInt(RectUV.y), Mathf.FloorToInt(NumQuad), Mathf.FloorToInt(NumQuad), 0);
 
                 float MinHeight = HeightValues[0].r;
                 float MaxHeight = HeightValues[0].r;
@@ -87,12 +87,12 @@ namespace Landscape.Terrain
                 float PosY = ((Section.CenterPosition.y + MinHeight * ScaleY) + (Section.CenterPosition.y + MaxHeight * ScaleY)) * 0.5f;
                 float SizeY = ((Section.CenterPosition.y + MinHeight * ScaleY) - (Section.CenterPosition.y + MaxHeight * ScaleY));
                 float3 NewBoundCenter = new float3(Section.CenterPosition.x, PosY, Section.CenterPosition.z);
-                Section.BoundinBox = new Bounds(NewBoundCenter, new Vector3(SectionSize, SizeY, SectionSize));
+                Section.BoundinBox = new Bounds(NewBoundCenter, new Vector3(NumQuad, SizeY, NumQuad));
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void GetTerrainBatch(int SectionSize, float TerrainScaleY, float3 SectorPosition, float3 ViewOringin, FTerrainBatchCollector TerrainBatchCollector, in FTerrainBatchInitializer TerrainBatchInitializer)
+        public void GetTerrainBatch(int NumQuad, float TerrainScaleY, float3 SectorPosition, float3 ViewOringin, FTerrainBatchCollector TerrainBatchCollector, in FTerrainBatchInitializer TerrainBatchInitializer)
         {
             if (LandscapeUtility.IntersectAABBFrustum(TerrainBatchInitializer.FrustumPlane, BoundinBox))
             {
@@ -105,11 +105,11 @@ namespace Landscape.Terrain
                     if (LandscapeUtility.IntersectAABBFrustum(TerrainBatchInitializer.FrustumPlane, Section.BoundinBox))
                     {
                         //Update MeshBatch
-                        Section.GetTerrainBatch(SectionSize, TerrainScaleY, SectorPosition, ViewOringin, TerrainBatchCollector, TerrainBatchInitializer);
+                        Section.GetTerrainBatch(NumQuad, TerrainScaleY, SectorPosition, ViewOringin, TerrainBatchCollector, TerrainBatchInitializer);
 
 #if UNITY_EDITOR
                         //LandscapeUtility.DrawRect(Section.RectBox, Color.red);
-                        LandscapeUtility.DrawBound(Section.BoundinBox, new Color(LandscapeUtility.LODColor[Section.LODIndex].x * 0.5f, LandscapeUtility.LODColor[Section.LODIndex].y * 0.5f, LandscapeUtility.LODColor[Section.LODIndex].z * 0.5f));
+                        LandscapeUtility.DrawBound(Section.BoundinBox, LandscapeUtility.LODColor[Section.LODIndex]);
 #endif
                     }
                 }
