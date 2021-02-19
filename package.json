@@ -1,0 +1,17 @@
+{
+  "name": "com.infinity.infinity.render-terrain",
+  "description": "The Infinity-Terrain.",
+  "version": "0.1.5",
+  "unity": "2020.2",
+  "unityRelease": "0b12",
+  "displayName": "InfinityTerrain",
+  "dependencies": {
+    "com.unity.jobs": "0.8.0-preview.23",
+    "com.unity.burst": "1.4.4",
+    "com.unity.mathematics": "1.2.1",
+    "com.unity.addressables": "1.16.16",
+    "com.unity.render-pipelines.core": "10.2.2",
+    "com.unity.render-pipelines.universal": "10.2.2"
+  },
+  "type": "library"
+}

@@ -23,19 +23,11 @@ namespace Landscape.Terrain
         public int LODIndex;
         public float FractionLOD;
 
-        public int MaxLOD;	
-        public int FirstLOD;
-        public int LastLOD;
-
-        public string Name;
-        public int SectionIndex;
-        public SectionLODData LODSettings;
-        //public float[] LODScreenRatioSquared;
-
-        public Rect RectBox;
         public Bounds BoundinBox;
-        public Vector3 Position;
+        public Vector3 PivotPosition;
         public Vector3 CenterPosition;
+
+        private SectionLODData LODSettings;
 
         [NonSerialized]
         public TerrainSection[] NeighborSection;
@@ -48,8 +40,7 @@ namespace Landscape.Terrain
 
         public void Init(int InMaxLOD, float InLOD0ScreenSize, float InLOD0Distribution, float InLODDistribution) 
         {
-            MaxLOD = InMaxLOD;
-            float[] LODScreenRatioSquared = new float[MaxLOD];
+            float[] LODScreenRatioSquared = new float[InMaxLOD];
 
             float CurrentScreenSizeRatio = InLOD0ScreenSize;
             float ScreenSizeRatioDivider = Mathf.Max(InLOD0Distribution, 1.01f);
@@ -63,17 +54,15 @@ namespace Landscape.Terrain
             LODSettings.LODOnePlusDistributionScalarSquared = ScreenSizeRatioDivider * ScreenSizeRatioDivider;
 
             // Other LODs
-            for (int LOD_Index = 1; LOD_Index <= MaxLOD - 1; ++LOD_Index) // This should ALWAYS be calculated from the component size, not user MaxLOD override
+            for (int LOD_Index = 1; LOD_Index <= InMaxLOD - 1; ++LOD_Index) // This should ALWAYS be calculated from the component size, not user MaxLOD override
             {
                 LODScreenRatioSquared[LOD_Index] = LandscapeUtility.Squared(CurrentScreenSizeRatio);
                 CurrentScreenSizeRatio /= ScreenSizeRatioDivider;
             }
 
             // Clamp ForcedLOD to the valid range and then apply
-            FirstLOD = 0;
-            LastLOD = MaxLOD;
-            LODSettings.LastLODIndex = LastLOD;
-            LODSettings.LastLODScreenSizeSquared = LODScreenRatioSquared[LastLOD - 1];
+            LODSettings.LastLODIndex = InMaxLOD;
+            LODSettings.LastLODScreenSizeSquared = LODScreenRatioSquared[InMaxLOD - 1];
         }
 
         private int GetSurfacemapID(TerrainLayer[] InTerrainLayer, int Index)
@@ -112,7 +101,7 @@ namespace Landscape.Terrain
                 ShaderParameter.Left_FractionLOD = NeighborSection[2] != null ? NeighborSection[2].FractionLOD : FractionLOD;
                 ShaderParameter.Right_FractionLOD = NeighborSection[3] != null ? NeighborSection[3].FractionLOD : FractionLOD;
                 ShaderParameter.SectorPivot = SectorPosition;
-                ShaderParameter.SectionPivot = Position;
+                ShaderParameter.SectionPivot = PivotPosition;
 
                 ShaderParameter.SurfacemapAIndex = new int4(GetSurfacemapID(TerrainLayer, 0), GetSurfacemapID(TerrainLayer, 1), GetSurfacemapID(TerrainLayer, 2), GetSurfacemapID(TerrainLayer, 3));
                 ShaderParameter.SurfacemapBIndex = new int4(GetSurfacemapID(TerrainLayer, 4), GetSurfacemapID(TerrainLayer, 5), GetSurfacemapID(TerrainLayer, 6), GetSurfacemapID(TerrainLayer, 7));

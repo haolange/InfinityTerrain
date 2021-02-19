@@ -17,32 +17,30 @@ namespace Landscape.Terrain
 
         }
 
-        public void Serialize(int InTerrainSize, int InSectorSize, int InSectionSize, Vector3 InTerrianPosition, Bounds InSectorBound) 
+        public void Serialize(int SectorSize, int NumSection, int NumQuad, Vector3 InTerrianPosition, Bounds InSectorBound) 
         {
             // Serialize TerrainSection
-            int SectorSize_Half = InTerrainSize / 2;
-            int SectionSize_Half = InSectionSize / 2;
+            int SectorSize_Half = SectorSize / 2;
+            int SectionSize_Half = NumQuad / 2;
             Bounds SectorBounds = InSectorBound;
             BoundinBox = new Bounds(new Vector3(InTerrianPosition.x + SectorSize_Half, InTerrianPosition.y + (SectorBounds.size.y / 2), InTerrianPosition.z + SectorSize_Half), SectorBounds.size);
 
-            TerrainSections = new TerrainSection[InSectorSize * InSectorSize];
+            TerrainSections = new TerrainSection[NumSection * NumSection];
 
-            for (int SectorSizeX = 0; SectorSizeX <= InSectorSize - 1; SectorSizeX++)
+            for (int SectorSizeX = 0; SectorSizeX <= NumSection - 1; SectorSizeX++)
             {
-                for (int SectorSizeY = 0; SectorSizeY <= InSectorSize - 1; SectorSizeY++)
+                for (int SectorSizeY = 0; SectorSizeY <= NumSection - 1; SectorSizeY++)
                 {
-                    int ArrayIndex = (SectorSizeX * InSectorSize) + SectorSizeY;
-                    Vector3 SectionPosition = InTerrianPosition + new Vector3(InSectionSize * SectorSizeX, 0, InSectionSize * SectorSizeY);
-                    Vector3 SectionCenterPosition = SectionPosition + new Vector3(SectionSize_Half, 0, SectionSize_Half);
+                    int ArrayIndex = (SectorSizeX * NumSection) + SectorSizeY;
+                    Vector3 SectionPivotPosition = InTerrianPosition + new Vector3(NumQuad * SectorSizeX, 0, NumQuad * SectorSizeY);
+                    Vector3 SectionCenterPosition = SectionPivotPosition + new Vector3(SectionSize_Half, 0, SectionSize_Half);
 
                     TerrainSections[ArrayIndex] = new TerrainSection();
                     TerrainSections[ArrayIndex].NeighborSection = new TerrainSection[4];
 
-                    TerrainSections[ArrayIndex].Name = "X_" + SectorSizeX.ToString() + "Y_" + SectorSizeY;
-                    TerrainSections[ArrayIndex].SectionIndex = ArrayIndex;
-                    TerrainSections[ArrayIndex].Position = SectionPosition;
+                    TerrainSections[ArrayIndex].PivotPosition = SectionPivotPosition;
                     TerrainSections[ArrayIndex].CenterPosition = SectionCenterPosition;
-                    TerrainSections[ArrayIndex].BoundinBox = new Bounds(SectionCenterPosition, new Vector3(InSectionSize, 1, InSectionSize));
+                    TerrainSections[ArrayIndex].BoundinBox = new Bounds(SectionCenterPosition, new Vector3(NumQuad, 1, NumQuad));
                 }
             }
         }
@@ -66,8 +64,7 @@ namespace Landscape.Terrain
             foreach (TerrainSection Section in TerrainSections)
             {
                 float2 PositionScale = new float2(TerrianPosition.x, TerrianPosition.z) + new float2(TerrainSize_Half, TerrainSize_Half);
-                float2 RectUV = new float2((Section.Position.x - PositionScale.x) + TerrainSize_Half, (Section.Position.z - PositionScale.y) + TerrainSize_Half);
-                Section.RectBox = new Rect(RectUV.x, RectUV.y, SectionSize, SectionSize);
+                float2 RectUV = new float2((Section.PivotPosition.x - PositionScale.x) + TerrainSize_Half, (Section.PivotPosition.z - PositionScale.y) + TerrainSize_Half);
 
                 int ReverseScale = TerrainSize - SectionSize;
                 Color[] HeightValues = Heightmap.GetPixels(Mathf.FloorToInt(RectUV.x), ReverseScale - Mathf.FloorToInt(RectUV.y), Mathf.FloorToInt(SectionSize), Mathf.FloorToInt(SectionSize), 0);
@@ -100,19 +97,19 @@ namespace Landscape.Terrain
             if (LandscapeUtility.IntersectAABBFrustum(TerrainBatchInitializer.FrustumPlane, BoundinBox))
             {
 #if UNITY_EDITOR
-                //LandscapeUtility.DrawBound(BoundinBox, Color.white);
+                LandscapeUtility.DrawBound(BoundinBox, Color.white);
 #endif
 
                 foreach (TerrainSection Section in TerrainSections)
                 {
                     if (LandscapeUtility.IntersectAABBFrustum(TerrainBatchInitializer.FrustumPlane, Section.BoundinBox))
                     {
-                        // Update MeshBatch
+                        //Update MeshBatch
                         Section.GetTerrainBatch(SectionSize, TerrainScaleY, SectorPosition, ViewOringin, TerrainBatchCollector, TerrainBatchInitializer);
 
 #if UNITY_EDITOR
                         //LandscapeUtility.DrawRect(Section.RectBox, Color.red);
-                        //LandscapeUtility.DrawBound(Section.BoundinBox, new Color(LandscapeUtility.LODColor[Section.LODIndex].x * 0.5f, LandscapeUtility.LODColor[Section.LODIndex].y * 0.5f, LandscapeUtility.LODColor[Section.LODIndex].z * 0.5f));
+                        LandscapeUtility.DrawBound(Section.BoundinBox, new Color(LandscapeUtility.LODColor[Section.LODIndex].x * 0.5f, LandscapeUtility.LODColor[Section.LODIndex].y * 0.5f, LandscapeUtility.LODColor[Section.LODIndex].z * 0.5f));
 #endif
                     }
                 }

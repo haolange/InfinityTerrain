@@ -31,13 +31,13 @@ namespace Landscape
         public TerrainData UnityTerrainData;
 
         [HideInInspector]
-        public int TerrainSize;
+        public int SectorSize;
         [HideInInspector]
         public float TerrainScaleY;
         [HideInInspector]
-        public int TerrainSectorSize;
+        public int NumSection;
         [HideInInspector]
-        public int TerrainSectionSize;
+        public int NumQuad;
         [HideInInspector]
         public TerrainSector TerrainSector;
         #endregion
@@ -76,11 +76,11 @@ namespace Landscape
         #region TerrainSector
         public void InitTerrain()
         {
-            UnityTerrain = GetComponent<UnityEngine.Terrain>();
-            UnityTerrainData = GetComponent<TerrainCollider>().terrainData;
+            //UnityTerrain = GetComponent<UnityEngine.Terrain>();
+            //UnityTerrainData = GetComponent<TerrainCollider>().terrainData;
             UnityTerrain.drawHeightmap = false;
 
-            TerrainSector.InitSections(TerrainSectorSize, 7, LOD0ScreenSize, LOD0Distribution, LODDistribution);
+            TerrainSector.InitSections(NumSection, 7, LOD0ScreenSize, LOD0Distribution, LODDistribution);
         }
 
         public void SerializeTerrain()
@@ -88,17 +88,17 @@ namespace Landscape
             UnityTerrain = GetComponent<UnityEngine.Terrain>();
             UnityTerrainData = GetComponent<TerrainCollider>().terrainData;
 
-            TerrainSize = UnityTerrainData.heightmapResolution - 1;
+            SectorSize = UnityTerrainData.heightmapResolution - 1;
             TerrainScaleY = UnityTerrainData.size.y;
-            TerrainSectorSize = LandscapeUtility.GetSectionNumFromTerrainSize(TerrainSize);
-            TerrainSectionSize = (TerrainSize) / LandscapeUtility.GetSectionNumFromTerrainSize(TerrainSize);
+            NumSection = LandscapeUtility.GetSectionNumFromTerrainSize(SectorSize);
+            NumQuad = (SectorSize) / LandscapeUtility.GetSectionNumFromTerrainSize(SectorSize);
 
-            TextureData = new TerrainTexture(TerrainSize);
+            TextureData = new TerrainTexture(SectorSize);
             TextureData.TerrainDataToHeightmap(UnityTerrainData);
 
             TerrainSector = new TerrainSector();
-            TerrainSector.Serialize(TerrainSize, TerrainSectorSize, TerrainSectionSize, transform.position, UnityTerrainData.bounds);
-            TerrainSector.CorrectionBounds(TerrainSectionSize, TerrainSize, TerrainScaleY, transform.position, TextureData.HeightMap);
+            TerrainSector.Serialize(SectorSize, NumSection, NumQuad, transform.position, UnityTerrainData.bounds);
+            TerrainSector.CorrectionBounds(NumQuad, SectorSize, TerrainScaleY, transform.position, TextureData.HeightMap);
 
             TextureData.Release();
         }
@@ -142,7 +142,7 @@ namespace Landscape
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void GetTerrainBatch(Camera RenderCamera, FTerrainBatchCollector TerrainBatchCollector, in FTerrainBatchInitializer TerrainBatchInitializer)
         {
-            TerrainSector.GetTerrainBatch(TerrainSectionSize, TerrainScaleY, transform.position, RenderCamera.transform.position, TerrainBatchCollector, TerrainBatchInitializer);
+            TerrainSector.GetTerrainBatch(NumQuad, TerrainScaleY, transform.position, RenderCamera.transform.position, TerrainBatchCollector, TerrainBatchInitializer);
         }
         #endregion
 
@@ -154,7 +154,7 @@ namespace Landscape
         {
             Vector3 Position = transform.position;
             Bounds BoundinBox = GetComponent<TerrainCollider>().terrainData.bounds;
-            int SectorSize_Half = TerrainSize / 2;
+            int SectorSize_Half = SectorSize / 2;
 
             return new Bounds(new Vector3(Position.x + SectorSize_Half, Position.y + (BoundinBox.size.y / 2), Position.z + SectorSize_Half), BoundinBox.size);
         }
