@@ -1,0 +1,22 @@
+{
+    "name": "Infinity.Render.Terrain.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c5fe2eb9d5ef64b4f892cb2e1428b4cc"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-terrain.infinity",
+            "expression": "0.0.0",
+            "define": "InfinityTerrainEditor"
+        }
+    ],
+    "noEngineReferences": false
+}
