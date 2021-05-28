@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using Landscape.Utils;
 using Unity.Collections;
-using Unity.Mathematics;
 using Landscape.Terrain;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Experimental.Rendering;
-using Landscape.ProceduralVirtualTexture;
 
 namespace Landscape.Rendering
 {
@@ -50,14 +48,9 @@ namespace Landscape.Rendering
         private LandscapeRender m_LandscapeRender;
         private ScriptableRenderer m_scriptableRender;
 
-        private RenderTexture m_FeedbackBuffer;
-        private FFeedbackReader FeedbackReader;
-
-
         public LandscapeRenderPass(LandscapeRender InLandscapeRender)
         {
             m_LandscapeRender = InLandscapeRender;
-            FeedbackReader = new FFeedbackReader(true);
         }
 
         ~LandscapeRenderPass()
@@ -76,10 +69,6 @@ namespace Landscape.Rendering
             int SizeX = m_renderingData.cameraData.camera.pixelWidth / 8;
             int SizeY = m_renderingData.cameraData.camera.pixelHeight / 8;
             RenderTextureDescriptor FeedbackBufferDesc = new RenderTextureDescriptor { width = SizeX, height = SizeY, volumeDepth = 1, dimension = TextureDimension.Tex2D, graphicsFormat = GraphicsFormat.R8G8B8A8_UNorm, depthBufferBits = 32, mipCount = -1, useMipMap = false, autoGenerateMips = false, bindMS = false, msaaSamples = 1 };
-            m_FeedbackBuffer = RenderTexture.GetTemporary(FeedbackBufferDesc);
-            m_FeedbackBuffer.filterMode = FilterMode.Point;
-            //ConfigureTarget(m_FeedbackBuffer.Identifier());
-            //ConfigureClear(ClearFlag.All, Color.black);
         }
 
         public override void Execute(ScriptableRenderContext renderContext, ref RenderingData renderingData)
@@ -160,39 +149,6 @@ namespace Landscape.Rendering
             }
             #endregion //BuildTerrainDrawCommand
 
-            #region DrawFeedback
-            if (FeedbackReader.bRequest)
-            {
-                using (new ProfilingScope(CmdBuffer, ProfilingSampler.Get(LandscapeSamplerId.DrawFeedback)))
-                {
-                    CmdBuffer.SetRenderTarget(m_FeedbackBuffer);
-                    CmdBuffer.ClearRenderTarget(true, true, clearColor);
-
-                    for (int LODIndex = 0; LODIndex <= 6; LODIndex++)
-                    {
-                        int InstanceCount = TerrainDrawCommandList[LODIndex].InstanceCount;
-                        int InstanceOffset = TerrainDrawCommandList[LODIndex].BufferOffset;
-
-                        if (InstanceCount != 0)
-                        {
-                            Materials[LODIndex].SetInt(ShaderParameter_ID.LastLOD, 5);
-                            Materials[LODIndex].SetInt(ShaderParameter_ID.SectorSize, 16);
-                            Materials[LODIndex].SetInt(ShaderParameter_ID.SectionSize, 64);
-                            Materials[LODIndex].SetInt(ShaderParameter_ID.TerrainSize, 1024);
-                            Materials[LODIndex].SetInt(ShaderParameter_ID.BufferOffset, InstanceOffset);
-                            Materials[LODIndex].SetVector(ShaderParameter_ID.VTFeedbackParams, new float4(-512, -512, 1024, 8256));
-                            Materials[LODIndex].SetBuffer(ShaderParameter_ID.TerrainBuffer, TerrainBuffer.GetBuffer());
-                            Materials[LODIndex].SetTexture(ShaderParameter_ID.HeightArray, LandscapeManager.HeightArray);
-                            CmdBuffer.DrawMeshInstancedProcedural(Meshes[LODIndex], 0, Materials[LODIndex], 0, InstanceCount);
-                        }
-                    }
-
-                    FeedbackReader.FeedbackTexture = m_FeedbackBuffer;
-                    FeedbackReader.Execution(CmdBuffer);
-                }
-            }
-            #endregion //DrawFeedback
-
             #region DrawTerrain
             using (new ProfilingScope(CmdBuffer, ProfilingSampler.Get(LandscapeSamplerId.DrawTerrain)))
             {
@@ -232,7 +188,7 @@ namespace Landscape.Rendering
 
         public override void FrameCleanup(CommandBuffer CmdBuffer)
         {
-            RenderTexture.ReleaseTemporary(m_FeedbackBuffer);
+
         }
     }
 
