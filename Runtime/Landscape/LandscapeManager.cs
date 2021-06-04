@@ -286,16 +286,16 @@ namespace Landscape
         {
             //Create TerrainMaterial
             TerrainMaterials = new Material[7];
-            for (int i = 0; i <= 6; i++)
+            for (int i = 0; i < 7; ++i)
             {
                 TerrainMaterials[i] = new Material(Shader.Find("Terrain/TerrainLit_Instance"));
             }
 
             //Create TerrainMesh
             List<Mesh> TerrainQuadMesh = new List<Mesh>();
-            for (int NumQuad = 32; NumQuad > 0;)
+            for (int NumQuad = 64; NumQuad > 0;)
             {
-                TerrainQuadMesh.Add(TerrainMesh.BuildSectionMesh(false, NumQuad, 32));
+                TerrainQuadMesh.Add(TerrainMesh.BuildSectionMesh(false, NumQuad, 64));
                 NumQuad >>= 1;
             }
             TerrainMeshs = new Mesh[TerrainQuadMesh.Count];

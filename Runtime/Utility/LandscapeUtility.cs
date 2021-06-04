@@ -126,7 +126,7 @@ namespace Landscape.Utils
 
         public static int GetSectionNumFromTerrainSize(int InTerrainSize)
         {
-            return InTerrainSize / 32;
+            return InTerrainSize / 64;
         }
 
         public static void DrawBound(Bounds b)

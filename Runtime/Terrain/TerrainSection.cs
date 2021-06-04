@@ -69,7 +69,8 @@ namespace Landscape.Terrain
         {
             int OutIndex = -1;
 
-            if(Index <= InTerrainLayer.Length - 1) {
+            if(Index < InTerrainLayer.Length) 
+            {
                 OutIndex = LandscapeManager.GetTerrainLayerID(InTerrainLayer[Index]);
             }
 
@@ -80,8 +81,9 @@ namespace Landscape.Terrain
         public void GetTerrainBatch(int SectionSize, float TerrainScaleY, float3 SectorPosition, float3 ViewOringin, FTerrainBatchCollector TerrainBatchCollector, in FTerrainBatchInitializer TerrainBatchInitializer) 
         {
             float ScreenSize = LandscapeUtility.ComputeBoundsScreenRadiusSquared(LandscapeUtility.GetBoundRadius(BoundinBox), BoundinBox.center, ViewOringin, TerrainBatchInitializer.MatrixProj);
-            LODIndex = math.min(5, LandscapeUtility.GetLODFromScreenSize(LODSettings, ScreenSize, 1, out FractionLOD));
-            FractionLOD = math.min(5, FractionLOD);
+            LODIndex = LandscapeUtility.GetLODFromScreenSize(LODSettings, ScreenSize, 1, out FractionLOD);
+            //LODIndex = math.min(5, LODIndex);
+            //FractionLOD = math.min(4, FractionLOD);
             NumQuad = math.clamp(SectionSize >> LODIndex, 1, SectionSize);
 
             TerrainLayer[] TerrainLayer = TerrainBatchInitializer.TerrainLayer;

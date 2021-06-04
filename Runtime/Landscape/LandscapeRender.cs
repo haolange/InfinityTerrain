@@ -128,11 +128,11 @@ namespace Landscape.Rendering
             #region RenderLandscape
             Mesh[] Meshes = LandscapeManager.TerrainMeshs;
             Material[] Materials = LandscapeManager.TerrainMaterials;
-            NativeArray<FTerrainDrawCommand> TerrainDrawCommandList = new NativeArray<FTerrainDrawCommand>(6, Allocator.Temp);
+            NativeArray<FTerrainDrawCommand> TerrainDrawCommandList = new NativeArray<FTerrainDrawCommand>(7, Allocator.Temp);
 
             #region BuildTerrainDrawCommand
             int BufferOffset = 0;
-            for (int MDCIndex = 0; MDCIndex < 6; ++MDCIndex)
+            for (int MDCIndex = 0; MDCIndex < 7; ++MDCIndex)
             {
                 List<FTerrainBatch> TerrainBatch = TerrainBatchCollector.GetTerrainBatch(MDCIndex);
 
@@ -141,9 +141,7 @@ namespace Landscape.Rendering
                     TerrainBuffer.SetBufferData(BufferOffset, TerrainBatch.Count, TerrainBatch);
                     TerrainDrawCommandList[MDCIndex] = new FTerrainDrawCommand(TerrainBatch.Count, BufferOffset);
                     BufferOffset += TerrainBatch.Count;
-                }
-                else
-                {
+                } else {
                     TerrainDrawCommandList[MDCIndex] = new FTerrainDrawCommand(0, 0);
                 }
             }
@@ -154,16 +152,16 @@ namespace Landscape.Rendering
             {
                 CmdBuffer.SetRenderTarget(ColorBufferID);
 
-                for (int LODIndex = 0; LODIndex < 6; ++LODIndex)
+                for (int LODIndex = 0; LODIndex < 7; ++LODIndex)
                 {
                     int InstanceCount = TerrainDrawCommandList[LODIndex].InstanceCount;
                     int InstanceOffset = TerrainDrawCommandList[LODIndex].BufferOffset;
 
                     if (InstanceCount != 0)
                     {
-                        Materials[LODIndex].SetInt(ShaderParameter_ID.LastLOD, 5);
-                        Materials[LODIndex].SetInt(ShaderParameter_ID.SectorSize, 32);
-                        Materials[LODIndex].SetInt(ShaderParameter_ID.SectionSize, 32);
+                        Materials[LODIndex].SetInt(ShaderParameter_ID.LastLOD, 6);
+                        Materials[LODIndex].SetInt(ShaderParameter_ID.SectorSize, 16);
+                        Materials[LODIndex].SetInt(ShaderParameter_ID.SectionSize, 64);
                         Materials[LODIndex].SetInt(ShaderParameter_ID.TerrainSize, 1024);
                         Materials[LODIndex].SetInt(ShaderParameter_ID.BufferOffset, InstanceOffset);
                         Materials[LODIndex].SetBuffer(ShaderParameter_ID.TerrainBuffer, TerrainBuffer.GetBuffer());

@@ -127,11 +127,11 @@ float3 MorphVertex(in float2 UV, FSectionData SectionData, in float3 VertexPosit
     float2 ActualLODCoordsInt = floor((UV * (SectionData.NumQuad)) * pow(2, -(LodValue - SectionData.LODIndex)));
     float InvLODScaleFactor = pow(2, -LodValue);
     float2 CoordTranslate = float2(_SectionSize * InvLODScaleFactor, max(_SectionSize * 0.5 * InvLODScaleFactor, 2)) * rcp(_SectionSize);
-    float2 InputPositionCurrLOD = ActualLODCoordsInt * rcp(CoordTranslate.x);
-    float2 InputPositionNextLOD = (floor(ActualLODCoordsInt * 0.5) * rcp(CoordTranslate.y));
-    LocalPosition.xz = lerp(float2(InputPositionCurrLOD), float2(InputPositionNextLOD), MorphAlpha);
+    float2 InputPositionLODAdjusted = ActualLODCoordsInt / CoordTranslate.x;
+    float2 InputPositionNextLOD = (floor(ActualLODCoordsInt * 0.5) / CoordTranslate.y);
+    LocalPosition.xz = lerp(float2(InputPositionLODAdjusted), float2(InputPositionNextLOD), MorphAlpha);
 
-    float2 OldUV = InputPositionCurrLOD + SectionData.SectionPivot.xz;
+    float2 OldUV = InputPositionLODAdjusted + SectionData.SectionPivot.xz;
     OldUV = (OldUV - SectionData.SectorPivot.xz) * rcp(_TerrainSize);
     float OldHeight = _HeightArray.SampleLevel(Global_bilinear_clamp_sampler, float3(OldUV, SectionData.HeightmapIndex), 0, 0).r;
     float2 NewUV = InputPositionNextLOD + SectionData.SectionPivot.xz;
