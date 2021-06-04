@@ -24,7 +24,7 @@ namespace Landscape.ProceduralVirtualTexture
         public Rect DrawRect;
 
         public RuntimeVirtualTexture VirtualTexture;
-        public List<LandscapeProxy> LandscapeProxyList;
+        public List<TerrainComponent> LandscapeProxyList;
 
         public VirtualTextureVolume()
         {

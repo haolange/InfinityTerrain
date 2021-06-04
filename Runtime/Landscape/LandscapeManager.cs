@@ -213,7 +213,7 @@ namespace Landscape
         public static FTerrainBatchCollector TerrainBatchCollector;
 
         public static VirtualTextureVolume VTVolumeProxy;
-        protected static List<LandscapeProxy> LandscapeProxyList = new List<LandscapeProxy>();
+        protected static List<TerrainComponent> LandscapeProxyList = new List<TerrainComponent>();
 
 
         [Header("TextureSetting")]
@@ -419,17 +419,17 @@ namespace Landscape
         }
 
         //
-        public static void AddLandscapeProxy(LandscapeProxy InLandscapeProxy)
+        public static void AddLandscapeProxy(TerrainComponent InLandscapeProxy)
         {
             LandscapeProxyList.Add(InLandscapeProxy);
         }
 
-        public static void RemoveLandscapeProxy(LandscapeProxy InLandscapeProxy)
+        public static void RemoveLandscapeProxy(TerrainComponent InLandscapeProxy)
         {
             LandscapeProxyList.Remove(InLandscapeProxy);
         }
 
-        public static List<LandscapeProxy> GetLandscapeProxyList()
+        public static List<TerrainComponent> GetLandscapeProxyList()
         {
             return LandscapeProxyList;
         }

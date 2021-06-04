@@ -134,7 +134,7 @@ namespace Landscape.Editor.Terrain
                 Selection.activeObject = LandscapeObject;
                 Undo.RegisterCreatedObjectUndo(LandscapeObject, "Create Landscape");
 
-                LandscapeObject.AddComponent<LandscapeProxy>();
+                LandscapeObject.AddComponent<TerrainComponent>();
             }
         }
 
@@ -170,7 +170,7 @@ namespace Landscape.Editor.Terrain
                     Selection.activeObject = LandscapeObject;
                     Undo.RegisterCreatedObjectUndo(LandscapeObject, "Create Landscape");
 
-                    LandscapeObject.AddComponent<LandscapeProxy>();
+                    LandscapeObject.AddComponent<TerrainComponent>();
                 }
             }
         }

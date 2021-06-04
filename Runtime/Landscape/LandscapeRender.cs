@@ -90,7 +90,7 @@ namespace Landscape.Rendering
 
             for (int SectorIndex = 0; SectorIndex < LandscapeManager.GetLandscapeProxyList().Count; SectorIndex++)
             {
-                LandscapeProxy landscapeProxy = LandscapeManager.GetLandscapeProxyList()[SectorIndex];
+                TerrainComponent landscapeProxy = LandscapeManager.GetLandscapeProxyList()[SectorIndex];
 
                 if (NeedCopyTexture)
                 {

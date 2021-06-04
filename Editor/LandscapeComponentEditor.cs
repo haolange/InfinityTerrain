@@ -3,16 +3,10 @@
 namespace Landscape.Editor.Terrain
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(LandscapeProxy))]
-    public class LandscapeProxyEditor : UnityEditor.Editor
+    [CustomEditor(typeof(TerrainComponent))]
+    public class TerrainComponentEditor : UnityEditor.Editor
     {
-        LandscapeProxy LandscapeTarget { get { return target as LandscapeProxy; } }
-
-
-        public LandscapeProxyEditor()
-        {
-
-        }
+        TerrainComponent terrainTarget { get { return target as TerrainComponent; } }
 
         void OnEnable()
         {
@@ -40,7 +34,7 @@ namespace Landscape.Editor.Terrain
 
         void PreSave(UnityEngine.SceneManagement.Scene InScene, string InPath)
         {
-            LandscapeTarget.SerializeTerrain();
+            terrainTarget.SerializeTerrain();
         }
     }
 }

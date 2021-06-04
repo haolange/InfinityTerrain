@@ -124,7 +124,7 @@ float3 MorphVertex(in float2 UV, FSectionData SectionData, in float3 VertexPosit
 
     // MorphPosition
     float3 LocalPosition = VertexPosition;
-    float2 ActualLODCoordsInt = floor( (UV * (SectionData.NumQuad - 1) ) * pow( 2, -(LodValue - SectionData.LODIndex) ) );
+    float2 ActualLODCoordsInt = floor((UV * (SectionData.NumQuad - 1)) * pow(2, -(LodValue - SectionData.LODIndex)));
     float InvLODScaleFactor = pow(2, -LodValue);
     float2 CoordTranslate = float2(_SectionSize * InvLODScaleFactor - 1, max(_SectionSize * 0.5f * InvLODScaleFactor, 2) - 1) * rcp(_SectionSize);
     float2 InputPositionCurrLOD = ActualLODCoordsInt * rcp(CoordTranslate.x);

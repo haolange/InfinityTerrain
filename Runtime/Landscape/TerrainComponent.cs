@@ -8,8 +8,8 @@ namespace Landscape
 {
     //[ExecuteInEditMode]
     [RequireComponent(typeof(UnityEngine.Terrain))]
-    [AddComponentMenu("Landscape/LandscapeProxy")]
-    public class LandscapeProxy : MonoBehaviour
+    [AddComponentMenu("Landscape/Terrain Component")]
+    public class TerrainComponent : MonoBehaviour
     {
         [HideInInspector]
         public LandscapeResource ResourceProfile;
@@ -41,12 +41,6 @@ namespace Landscape
         [HideInInspector]
         public TerrainSector TerrainSector;
         #endregion
-
-
-        public LandscapeProxy()
-        {
-
-        }
 
         void OnEnable() 
         {
