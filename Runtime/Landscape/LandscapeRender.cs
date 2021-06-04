@@ -159,7 +159,7 @@ namespace Landscape.Rendering
 
                     if (InstanceCount != 0)
                     {
-                        Materials[LODIndex].SetInt(ShaderParameter_ID.LastLOD, 6);
+                        Materials[LODIndex].SetInt(ShaderParameter_ID.LastLOD, 5);
                         Materials[LODIndex].SetInt(ShaderParameter_ID.SectorSize, 16);
                         Materials[LODIndex].SetInt(ShaderParameter_ID.SectionSize, 64);
                         Materials[LODIndex].SetInt(ShaderParameter_ID.TerrainSize, 1024);
