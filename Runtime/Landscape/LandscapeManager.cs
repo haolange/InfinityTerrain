@@ -293,9 +293,9 @@ namespace Landscape
 
             //Create TerrainMesh
             List<Mesh> TerrainQuadMesh = new List<Mesh>();
-            for (int NumQuad = 64; NumQuad > 0;)
+            for (int NumQuad = 32; NumQuad > 0;)
             {
-                TerrainQuadMesh.Add(TerrainMesh.BuildSectionMesh(false, NumQuad, 64));
+                TerrainQuadMesh.Add(TerrainMesh.BuildSectionMesh(false, NumQuad, 32));
                 NumQuad >>= 1;
             }
             TerrainMeshs = new Mesh[TerrainQuadMesh.Count];

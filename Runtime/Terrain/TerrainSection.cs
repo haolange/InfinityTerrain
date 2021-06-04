@@ -54,14 +54,14 @@ namespace Landscape.Terrain
             LODSettings.LODOnePlusDistributionScalarSquared = ScreenSizeRatioDivider * ScreenSizeRatioDivider;
 
             // Other LODs
-            for (int LOD_Index = 1; LOD_Index <= InMaxLOD - 1; ++LOD_Index) // This should ALWAYS be calculated from the component size, not user MaxLOD override
+            for (int LOD_Index = 1; LOD_Index < InMaxLOD; ++LOD_Index) // This should ALWAYS be calculated from the component size, not user MaxLOD override
             {
                 LODScreenRatioSquared[LOD_Index] = LandscapeUtility.Squared(CurrentScreenSizeRatio);
                 CurrentScreenSizeRatio /= ScreenSizeRatioDivider;
             }
 
             // Clamp ForcedLOD to the valid range and then apply
-            LODSettings.LastLODIndex = InMaxLOD;
+            LODSettings.LastLODIndex = InMaxLOD - 1;
             LODSettings.LastLODScreenSizeSquared = LODScreenRatioSquared[InMaxLOD - 1];
         }
 
@@ -80,7 +80,7 @@ namespace Landscape.Terrain
         public void GetTerrainBatch(int SectionSize, float TerrainScaleY, float3 SectorPosition, float3 ViewOringin, FTerrainBatchCollector TerrainBatchCollector, in FTerrainBatchInitializer TerrainBatchInitializer) 
         {
             float ScreenSize = LandscapeUtility.ComputeBoundsScreenRadiusSquared(LandscapeUtility.GetBoundRadius(BoundinBox), BoundinBox.center, ViewOringin, TerrainBatchInitializer.MatrixProj);
-            LODIndex = math.min(6, LandscapeUtility.GetLODFromScreenSize(LODSettings, ScreenSize, 1, out FractionLOD));
+            LODIndex = math.min(5, LandscapeUtility.GetLODFromScreenSize(LODSettings, ScreenSize, 1, out FractionLOD));
             FractionLOD = math.min(5, FractionLOD);
             NumQuad = math.clamp(SectionSize >> LODIndex, 1, SectionSize);
 
@@ -88,8 +88,8 @@ namespace Landscape.Terrain
 
             FTerrainBatch ShaderParameter;
             {
-                ShaderParameter.NumQuad = math.max(2, NumQuad);
-                ShaderParameter.LODIndex = math.min(5, LODIndex);
+                ShaderParameter.NumQuad = NumQuad;
+                ShaderParameter.LODIndex = LODIndex;
                 ShaderParameter.ScaleY = TerrainScaleY * 2;
                 ShaderParameter.SplatmapCount = TerrainBatchInitializer.SplatmapCount;
                 ShaderParameter.SplatmapIndex = TerrainBatchInitializer.SplatmapIndex;

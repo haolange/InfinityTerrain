@@ -74,7 +74,7 @@ namespace Landscape
             //UnityTerrainData = GetComponent<TerrainCollider>().terrainData;
             UnityTerrain.drawHeightmap = false;
 
-            TerrainSector.InitSections(NumSection, 7, LOD0ScreenSize, LOD0Distribution, LODDistribution);
+            TerrainSector.InitSections(NumSection, 6, LOD0ScreenSize, LOD0Distribution, LODDistribution);
         }
 
         public void SerializeTerrain()
