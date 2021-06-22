@@ -123,20 +123,21 @@ float3 MorphVertex(in float2 UV, FSectionData SectionData, in float3 VertexPosit
     float MorphAlpha = LODCalculated - LodValue;
 
     // MorphPosition
+    int LODScale = 0;
     float3 LocalPosition = VertexPosition;
-    float2 ActualLODCoordsInt = floor((UV * (SectionData.NumQuad - 1)) * pow(2, -(LodValue - SectionData.LODIndex)));
+    float2 ActualLODCoordsInt = floor((UV * (SectionData.NumQuad /*- LODScale*/)) * pow(2, -(LodValue - SectionData.LODIndex)));
     float InvLODScaleFactor = pow(2, -LodValue);
-    float2 CoordTranslate = float2(_SectionSize * InvLODScaleFactor - 1, max(_SectionSize * 0.5 * InvLODScaleFactor, 2) - 1) * rcp(_SectionSize);
+    float2 CoordTranslate = float2(_SectionSize * InvLODScaleFactor /*- LODScale*/, max(_SectionSize * 0.5 * InvLODScaleFactor, 2) /*- LODScale*/) * rcp(_SectionSize);
     float2 InputPositionLODAdjusted = ActualLODCoordsInt / CoordTranslate.x;
     float2 InputPositionNextLOD = (floor(ActualLODCoordsInt * 0.5) / CoordTranslate.y);
     LocalPosition.xz = lerp(float2(InputPositionLODAdjusted), float2(InputPositionNextLOD), MorphAlpha);
 
     float2 OldUV = InputPositionLODAdjusted + SectionData.SectionPivot.xz;
     OldUV = (OldUV - SectionData.SectorPivot.xz) * rcp(_TerrainSize);
-    float OldHeight = _HeightArray.SampleLevel(Global_bilinear_clamp_sampler, float3(OldUV, SectionData.HeightmapIndex), 0, 0).r;
+    float OldHeight = _HeightArray.SampleLevel(Global_point_clamp_sampler, float3(OldUV, SectionData.HeightmapIndex), 0, 0).r;
     float2 NewUV = InputPositionNextLOD + SectionData.SectionPivot.xz;
     NewUV = (NewUV - SectionData.SectorPivot.xz) * rcp(_TerrainSize);
-    float NewHeight = _HeightArray.SampleLevel(Global_bilinear_clamp_sampler, float3(NewUV, SectionData.HeightmapIndex), 0, 0).r;
+    float NewHeight = _HeightArray.SampleLevel(Global_point_clamp_sampler, float3(NewUV, SectionData.HeightmapIndex), 0, 0).r;
     float Height = lerp(OldHeight, NewHeight, MorphAlpha);
 
     float3 WorldPosition = LocalPosition.xyz + SectionData.SectionPivot.xyz;
