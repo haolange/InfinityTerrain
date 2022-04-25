@@ -11,9 +11,6 @@ namespace Landscape
     [AddComponentMenu("Landscape/Terrain Component")]
     public class TerrainComponent : MonoBehaviour
     {
-        [HideInInspector]
-        public LandscapeResource ResourceProfile;
-
         #region TerrainSector
         [Header("LOD Setting")]
         public float LOD0ScreenSize = 0.5f;
@@ -44,25 +41,12 @@ namespace Landscape
 
         void OnEnable() 
         {
-            ResourceProfile = Resources.Load<LandscapeResource>("LandscapeResourceProfile");
-
             InitTerrain();
             AddWorldLandscape();
         }
 
-        void Start()
-        {
-
-        }
-
-        void Update()
-        {
-
-        }
-
         void OnDisable() 
         {
-            ResourceProfile = null;
             RemoveWorldLandscape();
         }
 
@@ -70,8 +54,8 @@ namespace Landscape
         #region TerrainSector
         public void InitTerrain()
         {
-            //UnityTerrain = GetComponent<UnityEngine.Terrain>();
-            //UnityTerrainData = GetComponent<TerrainCollider>().terrainData;
+            UnityTerrain = GetComponent<UnityEngine.Terrain>();
+            UnityTerrainData = GetComponent<TerrainCollider>().terrainData;
             UnityTerrain.drawHeightmap = false;
 
             TerrainSector.InitSections(NumSection, 7, LOD0ScreenSize, LOD0Distribution, LODDistribution);
